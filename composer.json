@@ -1,0 +1,33 @@
+{
+    "name": "shimoning/line-notify",
+    "type": "library",
+    "description": "A PHP library for LineNotify",
+    "keywords": [
+        "line",
+        "notify",
+        "api",
+        "message"
+    ],
+    "minimum-stability": "stable",
+    "version": "0.1.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shimon Haga",
+            "email": "shimon.haga@shimoning.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "guzzlehttp/guzzle": "^6.3|^7.4"
+    },
+    "require-dev": {
+        "symfony/console": "^6.2",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shimoning\\LineNotify\\": "src/"
+        }
+    }
+}
