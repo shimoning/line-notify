@@ -13,7 +13,7 @@ if (is_readable($dotEnvFile)) {
 }
 
 // application
-$application = new Application('line-notify', '0.1.0');
+$application = new Application('line-notify', '0.1.1');
 
 // Set commands
 $application->addCommands([

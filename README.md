@@ -2,7 +2,7 @@
 LineNotify を利用するための PHP ライブラリ
 
 ## Support versions
-* PHP8 <= 8.1
+* PHP8.1
 
 ## Install
 
@@ -13,7 +13,7 @@ LineNotify を利用するための PHP ライブラリ
         "type": "vcs",
         "url": "https://github.com/shimoning/line-notify.git"
     }
-},
+}
 ```
 
 その後以下でインストールする。

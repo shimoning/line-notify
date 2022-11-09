@@ -3,46 +3,65 @@
 namespace Shimoning\LineNotify\Entities;
 
 use Shimoning\LineNotify\Exceptions\ImageFileMissingException;
+use Shimoning\LineNotify\Exceptions\ImagePairMissingException;
 
 class Image
 {
-    private string|null $thumbnail;
-    private string|null $fullSize;
-    private string|null $filePath;
+    private string|null $thumbnail = null;
+    private string|null $fullSize = null;
+    private string|null $filePath = null;
 
     public function __construct(
-        string $thumbnail,
-        string $fullSize,
-        string $filePath,
+        ?string $thumbnail = null,
+        ?string $fullSize = null,
+        ?string $filePath = null,
     ) {
-        $this->thumbnail = $thumbnail;
-        $this->fullSize = $fullSize;
+        if ($thumbnail || $fullSize) {
+            if ($thumbnail && !$fullSize || !$thumbnail && $fullSize) {
+                throw new ImagePairMissingException();
+            }
+            // TODO: check jpeg only
+            $this->thumbnail = $thumbnail;
+            $this->fullSize = $fullSize;
+        }
 
         if ($filePath) {
             if (!\file_exists($filePath)) {
                 throw new ImageFileMissingException();
             }
+            // TODO: check png, jpeg only
             $this->filePath = $filePath;
         }
     }
 
-    public function getThumbnail(): string
+    public function getThumbnail(): ?string
     {
         return $this->thumbnail;
     }
 
-    public function getFullSize(): string
+    public function getFullSize(): ?string
     {
         return $this->fullSize;
     }
 
-    public function getFilePath(): string
+    public function getFilePath(): ?string
     {
         return $this->filePath;
+    }
+
+    public function hasImage(): bool
+    {
+        return !empty($this->thumbnail) && !empty($this->thumbnail);
     }
 
     public function hasFile(): bool
     {
         return !empty($this->filePath) && \file_exists($this->filePath);
+    }
+
+    public function getBinaryFile()
+    {
+        // return \file_get_contents($this->filePath);
+        return \fopen($this->filePath, 'r');
     }
 }

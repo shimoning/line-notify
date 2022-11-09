@@ -3,7 +3,9 @@
 namespace Shimoning\LineNotify;
 
 use GuzzleHttp\Client;
-use Shimoning\LineNotify\Exceptions\UnauthorizedException;
+use Shimoning\LineNotify\Entities\Response;
+use Shimoning\LineNotify\Entities\Image;
+use Shimoning\LineNotify\Entities\Sticker;
 
 /**
  * @see https://notify-bot.line.me/doc/ja/
@@ -20,32 +22,67 @@ class Api
      * @param Image|null $image
      * @param Sticker|null $sticker
      * @param bool $notificationDisabled (default = false)
-     * @return bool
+     * @param bool $returnRawResponse (default = false)
+     * @return Response|bool
      */
     public static function notify(
         string $accessToken,
         string $message,
-    ): bool {
+        ?Image $image = null,
+        ?Sticker $sticker = null,
+        ?bool $notificationDisabled = false,
+        ?bool $returnRawResponse = false,
+    ): Response|bool {
         $parameters = [
-            'message' => $message, // required
-            // 'imageThumbnail' => '', // option (jpeg)
-            // 'imageFullsize' => '', // option (jpeg)
-            // 'imageFile' => '', // option (png, jpeg)
-            // 'stickerPackageId' => -1, // option @see
-            // 'stickerId' => -1, // option @see
-            // 'notificationDisabled' => false, // option
+            'message' => $message,
+            'notificationDisabled' => $notificationDisabled,
         ];
 
-        $response = (new Client)->post('https://notify-api.line.me/api/notify', [
+        // image
+        if ($image?->hasImage()) {
+            $parameters['imageThumbnail'] = $image->getThumbnail();
+            $parameters['imageFullsize'] = $image->getFullSize();
+        }
+
+        // sticker
+        if ($sticker) {
+            $parameters['stickerPackageId'] = $sticker->getPackageId();
+            $parameters['stickerId'] = $sticker->getId();
+        }
+
+        $options = [
             'http_errors' => false,
             'headers' => [
                 'Content-Type'  => 'application/x-www-form-urlencoded',
                 'Authorization' => 'Bearer ' . $accessToken,
             ],
-            'form_params' => $parameters, // if having imageFile: 'multipart' => []
-        ]);
-        $statusCode = $response->getStatusCode();
-        return 200 <= $statusCode && $statusCode < 300;
+        ];
+        if ($image?->hasFile()) {
+            $_parameters = [];
+            foreach ($parameters as $key => $value) {
+                $_parameters[] = [
+                    'name' => $key,
+                    'contents' => $value,
+                ];
+            }
+            $_parameters[] = [
+                'name' => 'imageFile',
+                'contents' => $image->getBinaryFile(),
+            ];
+            $options['multipart'] = $_parameters;
+            $options['headers']['Content-Type'] = 'multipart/form-data';
+        } else {
+            $options['form_params'] = $parameters;
+        }
+
+        $response = new Response(
+            (new Client)->post('https://notify-api.line.me/api/notify', $options),
+        );
+        if ($returnRawResponse) {
+            return $response;
+        }
+
+        return $response->isSucceeded();
     }
 
     /**
