@@ -1,10 +1,7 @@
 <?php
 
-namespace Shimoning\LineNotify\Entities;
+namespace Shimoning\LineNotify\Constants;
 
-/**
- * TODO: implement
- */
 enum TargetType: string
 {
     case USER = 'USER';

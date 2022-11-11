@@ -2,16 +2,20 @@
 
 namespace Shimoning\LineNotify;
 
+use Shimoning\LineNotify\Entities\Response;
+
 class LINENotify
 {
     private string $accessToken;
+    private bool $returnRawResponse = false;
 
     /**
      * @param string $accessToken
      */
-    public function __construct(string $accessToken)
+    public function __construct(string $accessToken, bool $returnRawResponse = false)
     {
         $this->accessToken = $accessToken;
+        $this->returnRawResponse = $returnRawResponse;
     }
 
     /**
@@ -21,10 +25,21 @@ class LINENotify
      * @param Image|null $image
      * @param Sticker|null $sticker
      * @param bool $notificationDisabled (default = false)
-     * @return bool
+     * @return Response|bool
      */
-    public function notify(string $message): bool
-    {
-        return Api::notify($this->accessToken, $message);
+    public function notify(
+        string $message,
+        $image = null,
+        $sticker = null,
+        $notificationDisabled = false,
+    ): Response|bool {
+        return Api::notify(
+            $this->accessToken,
+            $message,
+            $image,
+            $sticker,
+            $notificationDisabled,
+            $this->returnRawResponse,
+        );
     }
 }
