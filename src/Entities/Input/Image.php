@@ -1,6 +1,6 @@
 <?php
 
-namespace Shimoning\LineNotify\Entities;
+namespace Shimoning\LineNotify\Entities\Input;
 
 use Shimoning\LineNotify\Exceptions\ImageFileMissingException;
 use Shimoning\LineNotify\Exceptions\ImagePairMissingException;

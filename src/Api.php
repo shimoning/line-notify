@@ -3,9 +3,11 @@
 namespace Shimoning\LineNotify;
 
 use GuzzleHttp\Client;
-use Shimoning\LineNotify\Entities\Response;
-use Shimoning\LineNotify\Entities\Image;
-use Shimoning\LineNotify\Entities\Sticker;
+
+use Shimoning\LineNotify\Entities\Input\Image;
+use Shimoning\LineNotify\Entities\Input\Sticker;
+use Shimoning\LineNotify\Entities\Output\Response;
+use Shimoning\LineNotify\Entities\Output\Status;
 
 /**
  * @see https://notify-bot.line.me/doc/ja/
@@ -53,7 +55,6 @@ class Api
         $options = [
             'http_errors' => false,
             'headers' => [
-                'Content-Type'  => 'application/x-www-form-urlencoded',
                 'Authorization' => 'Bearer ' . $accessToken,
             ],
         ];
@@ -70,7 +71,6 @@ class Api
                 'contents' => $image->getBinaryFile(),
             ];
             $options['multipart'] = $_parameters;
-            $options['headers']['Content-Type'] = 'multipart/form-data';
         } else {
             $options['form_params'] = $parameters;
         }
@@ -86,17 +86,28 @@ class Api
     }
 
     /**
-     * TODO: implement
-     *
      * 連携状態を確認する
-     * GET
      * https: //notify-bot.line.me/api/status
      *
-     * @return Status
+     * @return Status|false
      */
-    public static function status(string $accessToken)
+    public static function status(string $accessToken): Status|bool
     {
-        // new Status(string $message, TargetType $targetType, string $target)
+        $options = [
+            'http_errors' => false,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accessToken,
+            ],
+        ];
+
+        $response = new Response(
+            (new Client)->get('https://notify-api.line.me/api/status', $options),
+        );
+        if ($response->isSucceeded()) {
+            $result = $response->getJSONDecodedBody();
+            return new Status($result['targetType'], $result['target']);
+        }
+        return false;
     }
 
     /**

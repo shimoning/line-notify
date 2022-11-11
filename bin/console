@@ -13,11 +13,12 @@ if (is_readable($dotEnvFile)) {
 }
 
 // application
-$application = new Application('line-notify', '0.1.1');
+$application = new Application('line-notify', '0.2.0');
 
 // Set commands
 $application->addCommands([
     new Shimoning\LineNotify\Console\Notify,
+    new Shimoning\LineNotify\Console\Status,
 ]);
 
 exit($application->run());

@@ -8,8 +8,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 use Shimoning\LineNotify\Api;
-use Shimoning\LineNotify\Entities\Image;
-use Shimoning\LineNotify\Entities\Sticker;
+use Shimoning\LineNotify\Entities\Input\Image;
+use Shimoning\LineNotify\Entities\Input\Sticker;
 use Shimoning\LineNotify\Exceptions\AccessTokenMissingException;
 
 final class Notify extends Command
