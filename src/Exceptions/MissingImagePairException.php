@@ -2,7 +2,7 @@
 
 namespace Shimoning\LineNotify\Exceptions;
 
-class ImagePairMissingException extends LineNotifyException
+class MissingImagePairException extends LineNotifyException
 {
     protected $message = 'サムネイルとフルサイズの両方の画像をセットしてください。';
 }

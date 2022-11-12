@@ -2,8 +2,8 @@
 
 namespace Shimoning\LineNotify\Entities\Input;
 
-use Shimoning\LineNotify\Exceptions\ImageFileMissingException;
-use Shimoning\LineNotify\Exceptions\ImagePairMissingException;
+use Shimoning\LineNotify\Exceptions\MissingImageFileException;
+use Shimoning\LineNotify\Exceptions\MissingImagePairException;
 
 class Image
 {
@@ -17,19 +17,19 @@ class Image
         ?string $filePath = null,
     ) {
         if ($thumbnail || $fullSize) {
-            if ($thumbnail && !$fullSize || !$thumbnail && $fullSize) {
-                throw new ImagePairMissingException();
+            if (($thumbnail && !$fullSize) || (!$thumbnail && $fullSize)) {
+                throw new MissingImagePairException();
             }
-            // TODO: check jpeg only
+            // TODO: check jpeg only, size <= 240×240px
             $this->thumbnail = $thumbnail;
             $this->fullSize = $fullSize;
         }
 
         if ($filePath) {
             if (!\file_exists($filePath)) {
-                throw new ImageFileMissingException();
+                throw new MissingImageFileException();
             }
-            // TODO: check png, jpeg only
+            // TODO: check png, jpeg only, size <= 2048×2048px
             $this->filePath = $filePath;
         }
     }

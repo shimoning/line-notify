@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 use Shimoning\LineNotify\Api;
-use Shimoning\LineNotify\Exceptions\AccessTokenMissingException;
+use Shimoning\LineNotify\Exceptions\MissingAccessTokenException;
 
 final class Status extends Command
 {
@@ -30,7 +30,7 @@ final class Status extends Command
 
         $accessToken = $input->getOption('access-token') ?? $_ENV['ACCESS_TOKEN'];
         if (empty($accessToken)) {
-            throw new AccessTokenMissingException();
+            throw new MissingAccessTokenException();
         }
 
         // request

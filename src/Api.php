@@ -35,6 +35,7 @@ class Api
         ?bool $notificationDisabled = false,
         ?bool $returnRawResponse = false,
     ): Response|bool {
+        // TODO: check message length <= 1000
         $parameters = [
             'message' => $message,
             'notificationDisabled' => $notificationDisabled,
@@ -87,7 +88,7 @@ class Api
 
     /**
      * 連携状態を確認する
-     * https: //notify-bot.line.me/api/status
+     * https://notify-bot.line.me/api/status
      *
      * @return Status|false
      */
@@ -115,7 +116,7 @@ class Api
      *
      * 連携を解除する
      * POST
-     * https: //notify-bot.line.me/api/revoke
+     * https://notify-bot.line.me/api/revoke
      *
      * @return string $access_code
      */

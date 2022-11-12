@@ -2,7 +2,7 @@
 
 namespace Shimoning\LineNotify\Exceptions;
 
-class ImageFileMissingException extends LineNotifyException
+class MissingImageFileException extends LineNotifyException
 {
     protected $message = '画像ファイルが見つかりません。';
 }

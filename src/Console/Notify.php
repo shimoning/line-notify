@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Shimoning\LineNotify\Api;
 use Shimoning\LineNotify\Entities\Input\Image;
 use Shimoning\LineNotify\Entities\Input\Sticker;
-use Shimoning\LineNotify\Exceptions\AccessTokenMissingException;
+use Shimoning\LineNotify\Exceptions\MissingAccessTokenException;
 
 final class Notify extends Command
 {
@@ -22,7 +22,7 @@ final class Notify extends Command
         $this->setName('notify');
         $this->setDescription('Send message to LINE.');
 
-        $this->addOption('access-token', 't', InputOption::VALUE_OPTIONAL, 'Set AccessToken, if not input using env.', null);
+        $this->addOption('access-token', 't', InputOption::VALUE_OPTIONAL, 'Set AccessToken. If not input, using env.', null);
 
         $this->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message to notify.', 'Hello World!');
         $this->addOption('sticker', 's', InputOption::VALUE_OPTIONAL, 'Attach sticker. Input format is "PackageId-StickerId". example "446-1988"', null);
@@ -41,7 +41,7 @@ final class Notify extends Command
 
         $accessToken = $input->getOption('access-token') ?? $_ENV['ACCESS_TOKEN'];
         if (empty($accessToken)) {
-            throw new AccessTokenMissingException();
+            throw new MissingAccessTokenException();
         }
 
         // image
