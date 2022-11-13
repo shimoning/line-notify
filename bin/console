@@ -13,13 +13,14 @@ if (is_readable($dotEnvFile)) {
 }
 
 // application
-$application = new Application('line-notify', '0.3.0');
+$application = new Application('line-notify', '0.3.1');
 
 // Set commands
 $application->addCommands([
     new Shimoning\LineNotify\Console\Notify,
     new Shimoning\LineNotify\Console\Status,
     new Shimoning\LineNotify\Console\GenerateAuthUri,
+    new Shimoning\LineNotify\Console\ParseAuthResult,
 ]);
 
 exit($application->run());

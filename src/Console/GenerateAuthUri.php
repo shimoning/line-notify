@@ -50,7 +50,7 @@ final class GenerateAuthUri extends Command
 
         $responseMode = $input->getOption('response-mode') ?? null;
 
-        // request
+        // generate
         $uri = Auth::generateAuthUri($clientId, $redirectUri, $state, $responseMode);
         if ($uri) {
             $output->writeln('<question> - Succeed !</question>');
