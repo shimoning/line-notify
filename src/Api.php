@@ -8,6 +8,7 @@ use Shimoning\LineNotify\Entities\Input\Image;
 use Shimoning\LineNotify\Entities\Input\Sticker;
 use Shimoning\LineNotify\Entities\Output\Response;
 use Shimoning\LineNotify\Entities\Output\Status;
+use Shimoning\LineNotify\Exceptions\UnauthorizedException;
 
 /**
  * @see https://notify-bot.line.me/doc/ja/
@@ -83,6 +84,10 @@ class Api
             return $response;
         }
 
+        if ($response->getHTTPStatus() === 401) {
+            throw new UnauthorizedException('token の有効期限が切れています。');
+        }
+
         return $response->isSucceeded();
     }
 
@@ -112,18 +117,32 @@ class Api
     }
 
     /**
-     * TODO: implement
-     *
      * 連携を解除する
-     * POST
      * https://notify-bot.line.me/api/revoke
      *
-     * @return string $access_code
+     * @param string $accessToken
+     * @param bool $returnRawResponse (default = false)
+     * @return Response|bool
      */
-    public static function revoke(string $accessToken)
+    public static function revoke(string $accessToken, ?bool $returnRawResponse = false): Response|bool
     {
-        // statusCode = 200: 解除成功
-        // statusCode = 401: アクセストークンが既に無効になっている
-        // else: 異常状態, retry が推奨される
+        $options = [
+            'http_errors' => false,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $accessToken,
+            ],
+        ];
+        $response = new Response(
+            (new Client)->post('https://notify-api.line.me/api/revoke', $options),
+        );
+        if ($returnRawResponse) {
+            return $response;
+        }
+
+        if ($response->isSucceeded() || $response->getHTTPStatus() === 401) {
+            return true;
+        }
+
+        return false;
     }
 }
