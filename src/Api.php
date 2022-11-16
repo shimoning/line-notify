@@ -90,9 +90,9 @@ class Api
      * 連携状態を確認する
      * https://notify-bot.line.me/api/status
      *
-     * @return Status|false
+     * @return Status|null
      */
-    public static function status(string $accessToken): Status|bool
+    public static function status(string $accessToken): Status|null
     {
         $options = [
             'http_errors' => false,
@@ -108,7 +108,7 @@ class Api
             $result = $response->getJSONDecodedBody();
             return new Status($result['targetType'], $result['target']);
         }
-        return false;
+        return null;
     }
 
     /**

@@ -24,7 +24,7 @@ final class Notify extends Command
 
         $this->addOption('access-token', 't', InputOption::VALUE_OPTIONAL, 'Set AccessToken. If not input, using env.', null);
 
-        $this->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message to notify.', 'Hello World!');
+        $this->addOption('message', 'm', InputOption::VALUE_OPTIONAL, 'Message to notify.', 'Hello World!');
         $this->addOption('sticker', 's', InputOption::VALUE_OPTIONAL, 'Attach sticker. Input format is "PackageId-StickerId". example "446-1988"', null);
         $this->addOption('disabled-notification', 'd', InputOption::VALUE_OPTIONAL, 'Force to notification be disabled', false);
 

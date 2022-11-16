@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 use Shimoning\LineNotify\Auth;
 use Shimoning\LineNotify\Entities\Output\AuthResult;
+use Shimoning\LineNotify\Exceptions\ValidationException;
 
 final class ParseAuthResult extends Command
 {
@@ -29,6 +30,9 @@ final class ParseAuthResult extends Command
         $output->writeln('<info>Parse Auth Result Start</info>');
 
         $queryString = $input->getOption('query-string');
+        if (empty($queryString)) {
+            throw new ValidationException('query-string は必須です。');
+        }
 
         // parse
         $result = Auth::parseAuthResult($queryString);
