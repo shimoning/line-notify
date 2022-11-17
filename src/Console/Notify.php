@@ -7,10 +7,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-use Shimoning\LineNotify\Api;
-use Shimoning\LineNotify\Entities\Input\Image;
-use Shimoning\LineNotify\Entities\Input\Sticker;
+use Shimoning\LineNotify\Communicator\Api;
+use Shimoning\LineNotify\Entity\Input\Image;
+use Shimoning\LineNotify\Entity\Input\Sticker;
+use Shimoning\LineNotify\ValueObject\ImageFile;
+use Shimoning\LineNotify\ValueObject\Message;
 use Shimoning\LineNotify\Exceptions\MissingAccessTokenException;
+use Shimoning\LineNotify\ValueObject\ImageUri;
 
 final class Notify extends Command
 {
@@ -46,9 +49,15 @@ final class Notify extends Command
 
         // image
         $image = null;
-        $imageThumbnail = $input->getOption('image-thumbnail');
-        $imageFullSize = $input->getOption('image-fullsize');
-        $imageFile = $input->getOption('image-file');
+        $imageThumbnail = $input->getOption('image-thumbnail')
+            ? new ImageUri($input->getOption('image-thumbnail'))
+            : null;
+        $imageFullSize = $input->getOption('image-fullsize')
+            ? new ImageUri($input->getOption('image-fullsize'))
+            : null;
+        $imageFile = $input->getOption('image-file')
+            ? new ImageFile($input->getOption('image-file'))
+            : null;
         if (!empty($imageThumbnail) || !empty($imageFullSize) || !empty($imageFile)) {
             $image = new Image($imageThumbnail, $imageFullSize, $imageFile);
         }
@@ -65,7 +74,7 @@ final class Notify extends Command
         // request
         $result = Api::notify(
             $accessToken,
-            $input->getOption('message') ?? 'TEST.',
+            new Message($input->getOption('message') ?? 'TEST.'),
             $image,
             $sticker,
             $input->getOption('disabled-notification'),

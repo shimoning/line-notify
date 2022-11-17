@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-use Shimoning\LineNotify\Auth;
+use Shimoning\LineNotify\Communicator\Auth;
 use Shimoning\LineNotify\Exceptions\MissingClientIdException;
 use Shimoning\LineNotify\Exceptions\MissingRedirectUriException;
 use Shimoning\LineNotify\Exceptions\MissingStateException;

@@ -2,44 +2,51 @@
 
 namespace Shimoning\LineNotify;
 
-use Shimoning\LineNotify\Entities\Response;
+use Shimoning\LineNotify\Communicator\Api;
+use Shimoning\LineNotify\Entity\Output\Response;
+use Shimoning\LineNotify\ValueObject\Message;
 
 class LINENotify
 {
-    private string $accessToken;
-    private bool $returnRawResponse = false;
-
-    /**
-     * @param string $accessToken
-     */
-    public function __construct(string $accessToken, bool $returnRawResponse = false)
-    {
-        $this->accessToken = $accessToken;
-        $this->returnRawResponse = $returnRawResponse;
+    private string $channelId;
+    private string $channelSecret;
+    private $callbackUrl;
+    public function __construct(
+        string $channelId,
+        string $channelSecret,
+        string $callbackUrl,
+    ) {
+        $this->channelId = $channelId;
+        $this->channelSecret = $channelSecret;
+        $this->callbackUrl = $callbackUrl;
     }
 
     /**
      * 通知する
      *
-     * @param string $message
+     * @param string $accessToken
+     * @param Message $message
      * @param Image|null $image
      * @param Sticker|null $sticker
      * @param bool $notificationDisabled (default = false)
+     * @param bool $returnRawResponse (default = false)
      * @return Response|bool
      */
     public function notify(
-        string $message,
+        string $accessToken,
+        Message $message,
         $image = null,
         $sticker = null,
         $notificationDisabled = false,
+        $returnRawResponse = false,
     ): Response|bool {
         return Api::notify(
-            $this->accessToken,
+            $accessToken,
             $message,
             $image,
             $sticker,
             $notificationDisabled,
-            $this->returnRawResponse,
+            $returnRawResponse,
         );
     }
 }

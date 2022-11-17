@@ -1,6 +1,6 @@
 <?php
 
-namespace Shimoning\LineNotify\Entities\Output;
+namespace Shimoning\LineNotify\Entity\Output;
 
 class AuthError
 {

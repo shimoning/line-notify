@@ -1,12 +1,13 @@
 <?php
 
-namespace Shimoning\LineNotify;
+namespace Shimoning\LineNotify\Communicator;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Shimoning\LineNotify\Constants\ResponseMode;
-use Shimoning\LineNotify\Entities\Output\Response;
-use Shimoning\LineNotify\Entities\Output\AuthResult;
-use Shimoning\LineNotify\Entities\Output\AuthError;
+use Shimoning\LineNotify\Entity\Output\Response;
+use Shimoning\LineNotify\Entity\Output\AuthResult;
+use Shimoning\LineNotify\Entity\Output\AuthError;
 use Shimoning\LineNotify\Exceptions\UnauthorizedException;
 use Shimoning\LineNotify\Exceptions\ValidationException;
 use Shimoning\LineNotify\Utilities\Url;
@@ -88,8 +89,8 @@ class Auth
         ?bool $returnRawResponse = false,
     ): Response|string|null {
         $options = [
-            'http_errors' => false,
-            'form_params' => [
+            RequestOptions::HTTP_ERRORS => false,
+            RequestOptions::FORM_PARAMS => [
                 'grant_type'    => 'authorization_code', // fixed
                 'code'          => $code, // required
                 'client_id'     => $clientId, // required

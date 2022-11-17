@@ -1,6 +1,6 @@
 <?php
 
-namespace Shimoning\LineNotify\Entities;
+namespace Shimoning\LineNotify\Entity\Output;
 
 use Psr\Http\Message\ResponseInterface;
 
@@ -81,5 +81,15 @@ class Response
     public function getHeader(string $name): ?string
     {
         return $this->headers[$name] ?? null;
+    }
+
+    /**
+     * 取得した Response をそのまま取得する
+     *
+     * @return string
+     */
+    public function getRaw(): ResponseInterface
+    {
+        return $this->response;
     }
 }

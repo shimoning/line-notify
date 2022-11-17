@@ -7,13 +7,13 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-use Shimoning\LineNotify\Auth;
+use Shimoning\LineNotify\Communicator\Auth;
 use Shimoning\LineNotify\Exceptions\MissingClientIdException;
 use Shimoning\LineNotify\Exceptions\MissingClientSecretException;
 use Shimoning\LineNotify\Exceptions\MissingRedirectUriException;
 use Shimoning\LineNotify\Exceptions\ValidationException;
 
-final class ExchangeAuthToken extends Command
+final class ExchangeCode2Token extends Command
 {
     protected OutputInterface $output;
     protected function configure(): void

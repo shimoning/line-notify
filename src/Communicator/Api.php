@@ -1,13 +1,14 @@
 <?php
 
-namespace Shimoning\LineNotify;
+namespace Shimoning\LineNotify\Communicator;
 
 use GuzzleHttp\Client;
-
-use Shimoning\LineNotify\Entities\Input\Image;
-use Shimoning\LineNotify\Entities\Input\Sticker;
-use Shimoning\LineNotify\Entities\Output\Response;
-use Shimoning\LineNotify\Entities\Output\Status;
+use GuzzleHttp\RequestOptions;
+use Shimoning\LineNotify\Entity\Input\Image;
+use Shimoning\LineNotify\Entity\Input\Sticker;
+use Shimoning\LineNotify\Entity\Output\Response;
+use Shimoning\LineNotify\Entity\Output\Status;
+use Shimoning\LineNotify\ValueObject\Message;
 use Shimoning\LineNotify\Exceptions\UnauthorizedException;
 
 /**
@@ -21,7 +22,7 @@ class Api
      * @see https: //notify-bot.line.me/api/notify
      *
      * @param string $accessToken
-     * @param string $message
+     * @param Message $message
      * @param Image|null $image
      * @param Sticker|null $sticker
      * @param bool $notificationDisabled (default = false)
@@ -30,52 +31,63 @@ class Api
      */
     public static function notify(
         string $accessToken,
-        string $message,
+        Message $message,
         ?Image $image = null,
         ?Sticker $sticker = null,
         ?bool $notificationDisabled = false,
         ?bool $returnRawResponse = false,
     ): Response|bool {
-        // TODO: check message length <= 1000
         $parameters = [
-            'message' => $message,
-            'notificationDisabled' => $notificationDisabled,
+            [
+                'name' => 'message',
+                'contents' => $message->getValue(),
+            ],
+            [
+                'name' => 'notificationDisabled',
+                'contents' => $notificationDisabled ? 1 : 0,
+            ],
         ];
 
-        // image
-        if ($image?->hasImage()) {
-            $parameters['imageThumbnail'] = $image->getThumbnail();
-            $parameters['imageFullsize'] = $image->getFullSize();
+        // image:uri
+        if ($image?->hasUri()) {
+            $parameters[] = [
+                'name' => 'imageThumbnail',
+                'contents' => $image->getThumbnailUri(),
+            ];
+            $parameters[] = [
+                'name' => 'imageFullsize',
+                'contents' => $image->getFullSizeUri(),
+            ];
+        }
+
+        // image:file
+        if ($image?->hasFile()) {
+            $parameters[] = [
+                'name' => 'imageFile',
+                'contents' => $image->getBinaryFile(),
+                'filename' => $image->getFilename(),
+            ];
         }
 
         // sticker
         if ($sticker) {
-            $parameters['stickerPackageId'] = $sticker->getPackageId();
-            $parameters['stickerId'] = $sticker->getId();
+            $parameters[] = [
+                'name' => 'stickerPackageId',
+                'contents' => $sticker->getPackageId(),
+            ];
+            $parameters[] = [
+                'name' => 'stickerId',
+                'contents' => $sticker->getId(),
+            ];
         }
 
         $options = [
-            'http_errors' => false,
-            'headers' => [
+            RequestOptions::HTTP_ERRORS => false,
+            RequestOptions::HEADERS => [
                 'Authorization' => 'Bearer ' . $accessToken,
             ],
+            RequestOptions::MULTIPART => $parameters,
         ];
-        if ($image?->hasFile()) {
-            $_parameters = [];
-            foreach ($parameters as $key => $value) {
-                $_parameters[] = [
-                    'name' => $key,
-                    'contents' => $value,
-                ];
-            }
-            $_parameters[] = [
-                'name' => 'imageFile',
-                'contents' => $image->getBinaryFile(),
-            ];
-            $options['multipart'] = $_parameters;
-        } else {
-            $options['form_params'] = $parameters;
-        }
 
         $response = new Response(
             (new Client)->post('https://notify-api.line.me/api/notify', $options),
@@ -100,8 +112,8 @@ class Api
     public static function status(string $accessToken): Status|null
     {
         $options = [
-            'http_errors' => false,
-            'headers' => [
+            RequestOptions::HTTP_ERRORS => false,
+            RequestOptions::HEADERS => [
                 'Authorization' => 'Bearer ' . $accessToken,
             ],
         ];
@@ -124,11 +136,11 @@ class Api
      * @param bool $returnRawResponse (default = false)
      * @return Response|bool
      */
-    public static function revoke(string $accessToken, ?bool $returnRawResponse = false): Response|bool
+    public static function revokeAccessToken(string $accessToken, ?bool $returnRawResponse = false): Response|bool
     {
         $options = [
-            'http_errors' => false,
-            'headers' => [
+            RequestOptions::HTTP_ERRORS => false,
+            RequestOptions::HEADERS => [
                 'Authorization' => 'Bearer ' . $accessToken,
             ],
         ];

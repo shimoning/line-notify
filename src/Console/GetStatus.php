@@ -7,17 +7,17 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-use Shimoning\LineNotify\Api;
+use Shimoning\LineNotify\Communicator\Api;
 use Shimoning\LineNotify\Exceptions\MissingAccessTokenException;
 
-final class Status extends Command
+final class GetStatus extends Command
 {
     protected OutputInterface $output;
     protected function configure(): void
     {
         parent::configure();
 
-        $this->setName('status');
+        $this->setName('status:get');
         $this->setDescription('Get connection status.');
 
         $this->addOption('access-token', 't', InputOption::VALUE_OPTIONAL, 'Set AccessToken, if not input using env.', null);

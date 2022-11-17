@@ -1,6 +1,6 @@
 <?php
 
-namespace Shimoning\LineNotify\Entities\Output;
+namespace Shimoning\LineNotify\Entity\Output;
 
 use Shimoning\LineNotify\Constants\TargetType;
 use Shimoning\LineNotify\Exceptions\LineNotifyException;

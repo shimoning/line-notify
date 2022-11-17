@@ -7,8 +7,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-use Shimoning\LineNotify\Auth;
-use Shimoning\LineNotify\Entities\Output\AuthResult;
+use Shimoning\LineNotify\Communicator\Auth;
+use Shimoning\LineNotify\Entity\Output\AuthResult;
 use Shimoning\LineNotify\Exceptions\ValidationException;
 
 final class ParseAuthResult extends Command

@@ -7,19 +7,17 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-use Shimoning\LineNotify\Api;
-use Shimoning\LineNotify\Entities\Input\Image;
-use Shimoning\LineNotify\Entities\Input\Sticker;
+use Shimoning\LineNotify\Communicator\Api;
 use Shimoning\LineNotify\Exceptions\MissingAccessTokenException;
 
-final class Revoke extends Command
+final class RevokeAccessToken extends Command
 {
     protected OutputInterface $output;
     protected function configure(): void
     {
         parent::configure();
 
-        $this->setName('revoke');
+        $this->setName('token:revoke');
         $this->setDescription('Revoke a token');
 
         $this->addOption('access-token', 't', InputOption::VALUE_REQUIRED, 'Set AccessToken.');
@@ -36,7 +34,7 @@ final class Revoke extends Command
         }
 
         // request
-        $result = Api::revoke($accessToken);
+        $result = Api::revokeAccessToken($accessToken);
         if ($result) {
             $output->writeln('<question> - Succeed !</question>');
         } else {
