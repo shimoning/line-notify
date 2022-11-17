@@ -57,13 +57,25 @@ class Auth
     /**
      * 認証結果をパース
      *
-     * @param string $queryString
+     * @param string|array $result
      * @return AuthResult|AuthError
      */
-    static public function parseAuthResult(string $queryString)
+    static public function parseAuthResult(string|array $result): AuthResult|AuthError
     {
         $query = [];
-        \parse_str($queryString, $query);
+        if (\is_array($result)) {
+            // -> array
+            $query = $result;
+        } else {
+            $decoded = \json_decode($result, true);
+            if (\is_array($decoded) && \JSON_ERROR_NONE === \json_last_error()) {
+                // -> json
+                $query = $decoded;
+            } else {
+                // -> query string
+                \parse_str($result, $query);
+            }
+        }
 
         return isset($query['code'])
             ? new AuthResult($query['code'], $query['state'] ?? '')
@@ -81,7 +93,7 @@ class Auth
      * @param bool $returnRawResponse (default = false)
      * @return Response|string|null
      */
-    static public function token(
+    static public function exchangeCode4AccessToken(
         string $clientId,
         string $clientSecret,
         string $redirectUri,

@@ -21,7 +21,9 @@ final class ParseAuthResult extends Command
         $this->setName('auth:parse:result');
         $this->setDescription('Parse Auth Result.');
 
-        $this->addOption('query-string', 's', InputOption::VALUE_REQUIRED, 'Input query string', null);
+        $this->addOption('query-string', 's', InputOption::VALUE_REQUIRED, 'Input query string or JSON', null);
+        $this->addOption('query-keys', 'k', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Input keys of query array', []);
+        $this->addOption('query-values', 'd', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Input values of query array', []);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -29,13 +31,23 @@ final class ParseAuthResult extends Command
         $output->writeln('---');
         $output->writeln('<info>Parse Auth Result Start</info>');
 
-        $queryString = $input->getOption('query-string');
-        if (empty($queryString)) {
-            throw new ValidationException('query-string は必須です。');
+        $query = null;
+        if ($input->getOption('query-string')) {
+            $query = $input->getOption('query-string');
+        } else {
+            $keys = $input->getOption('query-keys');
+            $values = $input->getOption('query-values');
+            if (\count($keys) !== \count($values)) {
+                throw new ValidationException('query-keys と query-values は同じ数にしてください。');
+            }
+            $query = \array_combine($keys, $values);
+        }
+        if (empty($query)) {
+            throw new ValidationException('query-stringは必須です。');
         }
 
         // parse
-        $result = Auth::parseAuthResult($queryString);
+        $result = Auth::parseAuthResult($query);
         if ($result instanceof AuthResult) {
             $output->writeln('<question> - Succeed !</question>');
             $output->writeln('   * code: ' . $result->getCode());

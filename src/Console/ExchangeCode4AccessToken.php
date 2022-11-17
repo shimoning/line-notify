@@ -13,7 +13,7 @@ use Shimoning\LineNotify\Exceptions\MissingClientSecretException;
 use Shimoning\LineNotify\Exceptions\MissingRedirectUriException;
 use Shimoning\LineNotify\Exceptions\ValidationException;
 
-final class ExchangeCode2Token extends Command
+final class ExchangeCode4AccessToken extends Command
 {
     protected OutputInterface $output;
     protected function configure(): void
@@ -21,7 +21,7 @@ final class ExchangeCode2Token extends Command
         parent::configure();
 
         $this->setName('auth:exchange:token');
-        $this->setDescription('Exchange code to token.');
+        $this->setDescription('Exchange code for token.');
 
         $this->addOption('client-id', 'i', InputOption::VALUE_OPTIONAL, 'Set ClientId. If not input, using env.', null);
         $this->addOption('client-secret', 's', InputOption::VALUE_OPTIONAL, 'Set ClientSecret. If not input, using env.', null);
@@ -54,7 +54,7 @@ final class ExchangeCode2Token extends Command
         }
 
         // parse
-        $result = Auth::token(
+        $result = Auth::exchangeCode4AccessToken(
             $clientId,
             $clientSecret,
             $redirectUri,
