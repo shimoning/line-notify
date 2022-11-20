@@ -9,6 +9,7 @@ use Shimoning\LineNotify\Entity\Output\AuthError;
 use Shimoning\LineNotify\Entity\Output\AuthResult;
 use Shimoning\LineNotify\Entity\Output\Status;
 use Shimoning\LineNotify\ValueObject\Message;
+use Shimoning\LineNotify\Constants\ResponseMode;
 
 class LINENotify
 {
@@ -28,15 +29,18 @@ class LINENotify
     /**
      * 1. 認証用のURIを生成する
      *
+     * @param string $state
      * @param ResponseMode|string|null|null $responseMode
      * @return string
      */
-    public function generateAuthUri(ResponseMode|string|null $responseMode = null): string
-    {
+    public function generateAuthUri(
+        string $state,
+        ResponseMode|string|null $responseMode = null,
+    ): string {
         return Auth::generateAuthUri(
             $this->clientId,
-            $this->clientSecret,
             $this->callbackUrl,
+            $state,
             $responseMode,
         );
     }
@@ -82,10 +86,10 @@ class LINENotify
     public function notify(
         string $accessToken,
         Message $message,
-        $image = null,
-        $sticker = null,
-        $notificationDisabled = false,
-        $returnRawResponse = false,
+        ?Image $image = null,
+        ?Sticker $sticker = null,
+        ?bool $notificationDisabled = false,
+        ?bool $returnRawResponse = false,
     ): Response|bool {
         return Api::notify(
             $accessToken,
@@ -112,7 +116,7 @@ class LINENotify
      * 連携を解除する
      *
      * @param string $accessToken
-     * @return Status|null
+     * @return bool
      */
     public function revokeAccessToken(string $accessToken): bool
     {

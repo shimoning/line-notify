@@ -22,4 +22,9 @@ class AuthResult
     {
         return $this->state;
     }
+
+    public function isSucceeded(): bool
+    {
+        return true;
+    }
 }

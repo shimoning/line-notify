@@ -22,4 +22,9 @@ class AuthError
     {
         return $this->errorDescription;
     }
+
+    public function isSucceeded(): bool
+    {
+        return false;
+    }
 }

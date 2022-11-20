@@ -132,8 +132,8 @@ class Auth
     /**
      * state を簡易生成する
      *
-     * セキュリティ上、独自に作るのが望ましい
-     * 特に response_mode=form_post の場合は、 CSRF トークンなどを指定する。
+     * セキュリティ上、独自に生成するのが望ましい。
+     * 特に response_mode=form_post の場合は、 CSRF トークンなどを使用するべき。
      *
      * @param string $identity
      * @return string
