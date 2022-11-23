@@ -8,6 +8,8 @@ use Shimoning\LineNotify\Entity\Output\Response;
 use Shimoning\LineNotify\Entity\Output\AuthError;
 use Shimoning\LineNotify\Entity\Output\AuthResult;
 use Shimoning\LineNotify\Entity\Output\Status;
+use Shimoning\LineNotify\Entity\Input\Image;
+use Shimoning\LineNotify\Entity\Input\Sticker;
 use Shimoning\LineNotify\ValueObject\Message;
 use Shimoning\LineNotify\Constants\ResponseMode;
 
@@ -60,9 +62,9 @@ class LINENotify
      * 3. 認証コードを認証トークンに変換する
      *
      * @param string $code
-     * @return string
+     * @return string|null
      */
-    public function exchangeCode4AccessToken(string $code): string
+    public function exchangeCode4AccessToken(string $code): ?string
     {
         return Auth::exchangeCode4AccessToken(
             $this->clientId,

@@ -8,23 +8,25 @@ class ImageFile
 {
     private string $value;
 
-    public function __construct(string $value)
+    public function __construct(string $value, bool $restrict = true)
     {
-        if (!$this->isValid($value)) {
+        if (!$this->isValid($value, $restrict)) {
             throw new MissingImageFileException();
         }
         $this->value = $value;
     }
 
-    protected function isValid(string $value): bool
+    protected function isValid(string $value, bool $restrict = true): bool
     {
         if (!\file_exists($value)) {
             return false;
         }
 
-        $extension = \pathinfo($value, \PATHINFO_EXTENSION);
-        if (! \in_array($extension, ['jpeg', 'jpg', 'png'])) {
-            return false;
+        if ($restrict) {
+            $extension = \pathinfo($value, \PATHINFO_EXTENSION);
+            if (! \in_array($extension, ['jpeg', 'jpg', 'png'])) {
+                return false;
+            }
         }
         return true;
     }

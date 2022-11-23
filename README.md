@@ -29,7 +29,7 @@ composer require shimoning/line-notify
 $lineNotify = new \Shimoning\LinNotify\LINENotify\LINENotify(
   $channelId,
   $channelSecret,
-  $callbackUrl
+  $callbackUrl,
 );
 ```
 

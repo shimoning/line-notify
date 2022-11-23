@@ -4,10 +4,10 @@ namespace Shimoning\LineNotify\Communicator;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use Shimoning\LineNotify\Entity\Input\Image;
-use Shimoning\LineNotify\Entity\Input\Sticker;
 use Shimoning\LineNotify\Entity\Output\Response;
 use Shimoning\LineNotify\Entity\Output\Status;
+use Shimoning\LineNotify\Entity\Input\Image;
+use Shimoning\LineNotify\Entity\Input\Sticker;
 use Shimoning\LineNotify\ValueObject\Message;
 use Shimoning\LineNotify\Exceptions\UnauthorizedException;
 
@@ -18,8 +18,6 @@ class Api
 {
     /**
      * 通知する
-     *
-     * @see https: //notify-bot.line.me/api/notify
      *
      * @param string $accessToken
      * @param Message $message
@@ -105,7 +103,6 @@ class Api
 
     /**
      * 連携状態を確認する
-     * https://notify-bot.line.me/api/status
      *
      * @return Status|null
      */
@@ -130,7 +127,6 @@ class Api
 
     /**
      * 連携を解除する
-     * https://notify-bot.line.me/api/revoke
      *
      * @param string $accessToken
      * @param bool $returnRawResponse (default = false)

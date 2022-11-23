@@ -19,7 +19,6 @@ class Auth
 {
     /**
      * 認証用のURIを生成する
-     * https://notify-bot.line.me/oauth/authorize
      *
      * @param string $clientId
      * @param string $redirectUri
@@ -135,11 +134,11 @@ class Auth
      * セキュリティ上、独自に生成するのが望ましい。
      * 特に response_mode=form_post の場合は、 CSRF トークンなどを使用するべき。
      *
-     * @param string $identity
+     * @param string|null $identity
      * @return string
      */
-    static public function generateState(string $identity): string
+    static public function generateState(?string $identity = null): string
     {
-        return \md5(\uniqid() . $identity);
+        return \md5($identity ?? \uniqid());
     }
 }
