@@ -21,8 +21,8 @@ class Api
      *
      * @param string $accessToken
      * @param Message $message
-     * @param Image|null $image
      * @param Sticker|null $sticker
+     * @param Image|null $image
      * @param bool $notificationDisabled (default = false)
      * @param bool $returnRawResponse (default = false)
      * @return Response|bool
@@ -30,8 +30,8 @@ class Api
     public static function notify(
         string $accessToken,
         Message $message,
-        ?Image $image = null,
         ?Sticker $sticker = null,
+        ?Image $image = null,
         ?bool $notificationDisabled = false,
         ?bool $returnRawResponse = false,
     ): Response|bool {
@@ -45,6 +45,18 @@ class Api
                 'contents' => $notificationDisabled ? 1 : 0,
             ],
         ];
+
+        // sticker
+        if ($sticker) {
+            $parameters[] = [
+                'name' => 'stickerPackageId',
+                'contents' => $sticker->getPackageId(),
+            ];
+            $parameters[] = [
+                'name' => 'stickerId',
+                'contents' => $sticker->getId(),
+            ];
+        }
 
         // image:uri
         if ($image?->hasUri()) {
@@ -64,18 +76,6 @@ class Api
                 'name' => 'imageFile',
                 'contents' => $image->getBinaryFile(),
                 'filename' => $image->getFilename(),
-            ];
-        }
-
-        // sticker
-        if ($sticker) {
-            $parameters[] = [
-                'name' => 'stickerPackageId',
-                'contents' => $sticker->getPackageId(),
-            ];
-            $parameters[] = [
-                'name' => 'stickerId',
-                'contents' => $sticker->getId(),
             ];
         }
 

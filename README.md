@@ -1,5 +1,5 @@
 # line-notify
-LineNotify を利用するための PHP ライブラリ
+LineNotify を利用するための SDK
 
 ## Support versions
 * PHP8.1
@@ -48,13 +48,31 @@ $lineNotify->notify(
 );
 ```
 
+#### スタンプを送信したい
+第3引数に \Shimoning\LineNotify\Entity\Input\Sticker のインスタンスを渡す。
+
+スタンプの番号については下記の[公式ページ](https://developers.line.biz/ja/docs/messaging-api/sticker-list/)を参照。
+
+```php
+$sticker = new \Shimoning\LineNotify\Entity\Input\Sticker(
+    1988,   // パッケージ識別子
+    446,    // Sticker識別子
+);
+$lineNotify->notify(
+    $accessToken,
+    new \Shimoning\LineNotify\ValueObject\Message('送信するメッセージ'),
+    $sticker,
+);
+```
+
 #### ネット上に公開されている画像を送信したい
-第3引数に \Shimoning\LineNotify\Entity\Input\Image のインスタンスを渡す。
+第4引数に \Shimoning\LineNotify\Entity\Input\Image のインスタンスを渡す。
 
 サムネイルとフルサイズの両方の画像URIが必要(同じでも問題はないが、許容サイズに違いがある)。
-JPEG のみ (拡張子で簡易判定; 第2引数に false を入れると拡張子のチェックを回避できる)。
-サムネイルは、最大 240×240px (バリデーションなし)。
-フルサイズは、最大 2048×2048px (バリデーションなし)。
+- サムネイル: 最大 240×240px
+- フルサイズ: 最大 2048×2048px
+
+対応画像は JPEG のみ (拡張子で簡易判定; 第2引数に false を入れると拡張子のチェックを回避できる)。
 
 ```php
 $image = new \Shimoning\LineNotify\Entity\Input\Image(
@@ -64,14 +82,15 @@ $image = new \Shimoning\LineNotify\Entity\Input\Image(
 $lineNotify->notify(
     $accessToken,
     new \Shimoning\LineNotify\ValueObject\Message('送信するメッセージ'),
+    null,
     $image,
 );
 ```
 
-#### サーバ上にある画像を送信したい
-第3引数に \Shimoning\LineNotify\Entity\Input\Image のインスタンスを渡す。
+#### サーバ上にある画像を送信したい (画像アップロード)
+第4引数に \Shimoning\LineNotify\Entity\Input\Image のインスタンスを渡す。
 
-JPEG と PNG のみが利用可能 (拡張子で簡易判定)。
+対応画像は JPEG と PNG のみが利用可能 (拡張子で簡易判定; 第2引数に false を入れると拡張子のチェックを回避できる)。
 
 ```php
 $image = new \Shimoning\LineNotify\Entity\Input\Image(
@@ -82,46 +101,36 @@ $image = new \Shimoning\LineNotify\Entity\Input\Image(
 $lineNotify->notify(
     $accessToken,
     new \Shimoning\LineNotify\ValueObject\Message('送信するメッセージ'),
+    null,
     $image,
 );
 ```
 
-#### スタンプを送信したい
-第4引数に \Shimoning\LineNotify\Entity\Input\Sticker のインスタンスを渡す。
-
-スタンプの番号については下記の公式ページを参照。
-https://developers.line.biz/ja/docs/messaging-api/sticker-list/
-
-```php
-$sticker = new \Shimoning\LineNotify\Entity\Input\Sticker(
-    1988,   // パッケージ識別子
-    446,    // 	Sticker識別子
-);
-$lineNotify->notify(
-    $accessToken,
-    new \Shimoning\LineNotify\ValueObject\Message('送信するメッセージ'),
-    null,
-    $sticker,
-);
-```
+なお、画像アップロードとURIを同時に指定することができるが、画像アップロードが優先される。
 
 #### メッセージは送信するが、PUSH通知はしたく無い場合
 第5引数に true を入れる。
 
-
 ```php
 $lineNotify->notify(
     $accessToken,
     new \Shimoning\LineNotify\ValueObject\Message('送信するメッセージ'),
     null,
     null,
-    false,
+    true,
 );
 ```
 
+#### 投稿順
+メッセージ、スタンプ、画像を同時に指定すると、次の順番で投稿が実行される。
+1. メッセージ
+2. スタンプ
+3. 画像
+
 #### 静的呼び出し
-`$lineNotify->notify()` で実行しているが、静的に呼び出すことも可能。
-メッセージを送信するだけならインスタンスを作成する必要はないので、こちらの方を推奨。
+メッセージの送信を `$lineNotify->notify()` と実行する例を紹介しているが、静的に呼び出すことも可能。
+
+メッセージを送信するだけならインスタンスを作成する必要はないので、むしろこちらの方を推奨。
 
 ```php
 \Shimoning\LineNotify\Communicator\Api::notify(
@@ -138,13 +147,14 @@ $lineNotify->notify(
 Notify の利用を開始のための認証URLを取得する。
 
 ```php
-$lineNotify->generateAuthUri(
+$uriToRedirect = $lineNotify->generateAuthUri(
     $state, // CSRF 対策のトークンなどを入れる
 ); // https://notify-bot.line.me/oauth/authorize?response_type=code&client_id=...
 ```
 
 *state について*
-指定した値がリダイレクト後に渡されるので、一致するか確認することが推奨される。
+
+ユーザが認証してシステムに帰ってきた時に、`code` と一緒に `state` が戻ってくるので、一致するか確認することが推奨される。
 
 > CSRF 攻撃に対応するための任意のトークンを指定します
 > 典型的にはユーザのセッションIDから生成されるハッシュ値などを指定し、redirect_uri アクセス時に state パラメータを検証することでCSRF攻撃を防ぎます。
@@ -155,6 +165,7 @@ $lineNotify->generateAuthUri(
 
 
 *response_mode について*
+
 第2引数に `response_mode` を指定できる。
 引き受ける値は `form_post` のみで、これを指定すると、通常のリダイレクト(GET)ではなく `POST` で送信される。
 
@@ -166,10 +177,15 @@ $lineNotify->generateAuthUri(
 #### 2. 上記URLをユーザに踏んでもらい、リダイレクトもしくはポストで値が返ってきた時
 
 ```php
-// 配列の場合
-$queryData = filter_input_array(INPUT_GET, $_GET); // Pure PHP; type is array
-$queryData = $request->query(); // Laravel; type is array
+// 配列の場合 (GET)
+$queryData = filter_input_array(INPUT_GET, $_GET); // Pure PHP
+$queryData = $request->query(); // Laravel
 $resultOrError = $lineNotify->parseAuthResult($queryData);
+
+// 配列の場合 (POST)
+$formData = filter_input_array(INPUT_POST, $_POST); // Pure PHP
+$formData = $request->input(); // Laravel
+$resultOrError = $lineNotify->parseAuthResult($formData);
 
 // クエリストリングの場合
 $queryString = 'code=ABCD...&state=1234567890...';
@@ -197,7 +213,11 @@ if ($resultOrError->isSucceeded()) {
 ここで取得された access_token でメッセージ送信等を行う。
 
 ```php
-$accessToken = $lineNotify->exchangeCode4AccessToken($code);    // Abc1234...
+$accessTokenOrNull = $lineNotify->exchangeCode4AccessToken($code);    // Abc1234...
+if ($accessTokenOrNull === null) {
+    // something wrong
+    ...
+}
 ```
 
 -----

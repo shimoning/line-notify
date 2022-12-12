@@ -47,6 +47,15 @@ final class Notify extends Command
             throw new MissingAccessTokenException();
         }
 
+        // sticker
+        $sticker = null;
+        if ($input->getOption('sticker')) {
+            $ids = \explode('-', $input->getOption('sticker'));
+            if (\count($ids) === 2) {
+                $sticker = new Sticker($ids[0], $ids[1]);
+            }
+        }
+
         // image
         $image = null;
         $imageThumbnail = $input->getOption('image-thumbnail')
@@ -62,21 +71,12 @@ final class Notify extends Command
             $image = new Image($imageThumbnail, $imageFullSize, $imageFile);
         }
 
-        // sticker
-        $sticker = null;
-        if ($input->getOption('sticker')) {
-            $ids = \explode('-', $input->getOption('sticker'));
-            if (\count($ids) === 2) {
-                $sticker = new Sticker($ids[0], $ids[1]);
-            }
-        }
-
         // request
         $result = Api::notify(
             $accessToken,
             new Message($input->getOption('message') ?? 'TEST.'),
-            $image,
             $sticker,
+            $image,
             $input->getOption('disabled-notification'),
         );
         if ($result) {

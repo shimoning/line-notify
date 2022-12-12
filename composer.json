@@ -1,15 +1,19 @@
 {
     "name": "shimoning/line-notify",
     "type": "library",
-    "description": "A PHP library for LineNotify",
+    "description": "A SDK for LineNotify",
     "keywords": [
         "line",
         "notify",
         "api",
-        "message"
+        "sdk",
+        "message",
+        "sticker",
+        "image",
+        "photo"
     ],
     "minimum-stability": "stable",
-    "version": "0.7.1",
+    "version": "0.9.0",
     "license": "MIT",
     "authors": [
         {

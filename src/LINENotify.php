@@ -79,8 +79,8 @@ class LINENotify
      *
      * @param string $accessToken
      * @param Message $message
-     * @param Image|null $image
      * @param Sticker|null $sticker
+     * @param Image|null $image
      * @param bool $notificationDisabled (default = false)
      * @param bool $returnRawResponse (default = false)
      * @return Response|bool
@@ -88,16 +88,16 @@ class LINENotify
     public function notify(
         string $accessToken,
         Message $message,
-        ?Image $image = null,
         ?Sticker $sticker = null,
+        ?Image $image = null,
         ?bool $notificationDisabled = false,
         ?bool $returnRawResponse = false,
     ): Response|bool {
         return Api::notify(
             $accessToken,
             $message,
-            $image,
             $sticker,
+            $image,
             $notificationDisabled,
             $returnRawResponse,
         );
